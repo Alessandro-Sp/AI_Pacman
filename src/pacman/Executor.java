@@ -53,7 +53,7 @@ public class Executor {
 		// exec.runExperiment(new RandomPacMan(), new Legacy(), numTrials);
 
 		// run a game in synchronous mode: game waits until controllers respond.
-		 int delay = 100;
+		 int delay = 50;
 		 boolean visual = true;
 		 exec.runGame(new MyPacMan(), new Legacy(), visual, delay);
 

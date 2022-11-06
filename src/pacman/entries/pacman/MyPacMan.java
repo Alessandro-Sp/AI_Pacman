@@ -20,14 +20,14 @@ public class MyPacMan extends Controller<MOVE>
 		//game logic
 
 		//Create Tree
-		State state = new State(game.getScore(), 0, null);
+		State state = new State(game.getScore(), 0, game.getPacmanLastMoveMade());
 		Node root = new Node(state, null, new ArrayList<>());
 		Tree tree = new Tree(root);
 
 		//call monte-carlo search
 		myMove = getNextMove(game.copy(), tree);
 
-
+		System.out.println(myMove);
 //		Game simulation = game.copy();
 //		game.advanceGame(new PacManUtils().getRandomMove(), new RandomGhosts().getMove());
 
@@ -48,7 +48,7 @@ public class MyPacMan extends Controller<MOVE>
 	 * @return Next move that ms Pac-man is going to do
 	 */
 	private MOVE getNextMove(Game game, Tree tree){
-		return new MonteCarloTreeSearch().nextMove();
+		return new MonteCarloTreeSearch().nextMove(game, tree);
 	}
 
 }

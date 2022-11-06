@@ -1,6 +1,6 @@
 package pacman.entries.pacman;
 
-import pacman.controllers.examples.RandomGhosts;
+import pacman.controllers.examples.Legacy;
 import pacman.game.Constants;
 import pacman.game.Game;
 
@@ -15,9 +15,11 @@ public class Simulation {
      */
     public Node run(Game game, Node node, Constants.MOVE move){
 
-        game.advanceGame(move, new RandomGhosts().getMove());
+        game.advanceGame(move, new Legacy().getMove());
+//        game.advanceGame(move, new RandomGhosts().getMove());
 
-        node.getState().setScore(game.getScore());
+        node.getState().addScore(game.getScore());
+        node.getState().setWasPacManEaten(game.wasPacManEaten());
 
         return node;
     }

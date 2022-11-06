@@ -2,30 +2,20 @@ package pacman.entries.pacman;
 
 import pacman.game.Constants.MOVE;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class PacManUtils {
 
     /**
      * This method is used to get a random move
-     * @return
+     * @return random move
      */
     public MOVE getRandomMove(){
-        return MOVE.values()[new Random().nextInt(MOVE.values().length)];
-    }
-
-    /**
-     * This method give back the Upper Confidence Bound (UCB)
-     *
-     * The formula used is - Vi + 2 * sqrt(ln(N)/Ni)
-     */
-    public double UCBValue(int visits, int winScore, int NOfVisits){
-        if (0 == NOfVisits){
-            return Integer.MAX_VALUE; // NEED TO CHECK WHAT THIS WILL BE
+        MOVE move = MOVE.values()[new Random().nextInt(MOVE.values().length)];
+        while (MOVE.NEUTRAL == move){
+            move = MOVE.values()[new Random().nextInt(MOVE.values().length)];
         }
-        return ((double)winScore / (double)NOfVisits) + 2 * Math.sqrt(Math.log(visits) / (double)NOfVisits);
+        return move;
     }
 }
 
@@ -51,6 +41,10 @@ class Tree {
 
     public Node getRoot() {
         return root;
+    }
+
+    public void addNode(Node parent, Node node){
+        parent.addChild(node);
     }
 }
 
@@ -98,31 +92,13 @@ class Node {
     }
 
     /**
-     * THis method is used to add multiple children to a node
-     * @param childNodes list of children to add
-     */
-    public void addChildNodes(List<Node> childNodes) {
-        for(Node child : childNodes){
-            child.setParent(this);
-        }
-        this.childNodes.addAll(childNodes);
-    }
-
-    /**
-     * Check to see if is a leaf node
-     * @return true if no children are found
-     */
-    public boolean isTerminalNode(){
-        return null == childNodes;
-    }
-
-    /**
      * Used to check if node is the root Node
      * @return True if parent is found
      */
     public boolean isRootNode(){
         return null == this.parent;
     }
+
 }
 
 /**
@@ -132,6 +108,7 @@ class State {
     int score; //game score
     int NOfVisits; //how many time the node is been visited
     MOVE move;
+    boolean wasPacManEaten;
 
     public State(int score, int NOfVisits, MOVE move) {
         this.score = score;
@@ -143,8 +120,8 @@ class State {
         return score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void addScore(int score) {
+        this.score += score;
     }
 
     public int getNOfVisits() {
@@ -161,5 +138,13 @@ class State {
 
     public void setMove(MOVE move) {
         this.move = move;
+    }
+
+    public boolean isWasPacManEaten() {
+        return wasPacManEaten;
+    }
+
+    public void setWasPacManEaten(boolean wasPacManEaten) {
+        this.wasPacManEaten = wasPacManEaten;
     }
 }
