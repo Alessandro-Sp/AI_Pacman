@@ -17,6 +17,10 @@ public class PacManUtils {
         }
         return move;
     }
+
+    public Node getChildNodeWithMaxVisit(Node rootNode) {
+        return Collections.max(rootNode.getChildNodes(), Comparator.comparing(c -> c.getState().getNOfVisits()));
+    }
 }
 
 /**
@@ -82,6 +86,10 @@ class Node {
         return childNodes;
     }
 
+    public void setChildNodes(List<Node> childNodes) {
+        this.childNodes = childNodes;
+    }
+
     /**
      * This method add a child to the node
      * @param node child node
@@ -98,7 +106,6 @@ class Node {
     public boolean isRootNode(){
         return null == this.parent;
     }
-
 }
 
 /**

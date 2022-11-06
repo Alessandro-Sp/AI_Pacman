@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class MyPacMan extends Controller<MOVE>
 {
-	private MOVE myMove=MOVE.NEUTRAL;
+//	private MOVE myMove=MOVE.NEUTRAL;
 	
 	public MOVE getMove(Game game, long timeDue)
 	{
@@ -25,7 +25,7 @@ public class MyPacMan extends Controller<MOVE>
 		Tree tree = new Tree(root);
 
 		//call monte-carlo search
-		myMove = getNextMove(game.copy(), tree);
+		MOVE myMove = getNextMove(game.copy(), tree);
 
 		System.out.println(myMove);
 //		Game simulation = game.copy();

@@ -6,6 +6,7 @@ import pacman.game.Game;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class MonteCarloTreeSearch {
 
@@ -28,27 +29,32 @@ public class MonteCarloTreeSearch {
         while(!game.gameOver()){//TODO: Find better way
             Node bestNode = currentNode;
 
-            //get next best
-            if (!currentNode.isRootNode()) {
-                bestNode = getBestNextNode(currentNode);
-            }
-
             // Check if we need to stop rollout
-            if (null == bestNode.getChildNodes()) {//is terminal node - bestNode.getState().isWasPacManEaten()
-                return backPropagate(bestNode, bestNode, currentNode.getState().getScore());
+            if (bestNode.getState().isWasPacManEaten() || null == bestNode.getChildNodes()) {//is terminal node - bestNode.getState().isWasPacManEaten()
+                return bestNode;
             }
 
             // Expand
-            Node newNode = expandOne(bestNode);
+            bestNode.setChildNodes(expand(bestNode));
+//            bestNode.getChildNodes().add(expandOne(bestNode));
+//            bestNode.getChildNodes().add(expandOne(bestNode));
+
+            //get next best
+//            if (!currentNode.isRootNode()) {
+            currentNode = getBestNextNode(bestNode);
+//            }
+
+//            if (0 != currentNode.getState().getNOfVisits()){
+//                continue;
+//            }
 
             // Run simulation
-            Node simNode = new Simulation().run(game, newNode, newNode.getState().getMove());
-            // Add simulated node to the tree
-            tree.addNode(bestNode, simNode);
-            // Update current node
-//            currentNode = simNode;
-            currentNode = backPropagate(simNode, simNode, currentNode.getState().getScore());
+            Node simNode = new Simulation().run(game, currentNode, currentNode.getState().getMove());
 
+            // Back-Propagate
+            backPropagate(simNode, simNode.getState().getScore(), 0);
+
+            currentNode = new PacManUtils().getChildNodeWithMaxVisit(tree.getRoot());
 //            index++;
         }
 
@@ -100,31 +106,39 @@ public class MonteCarloTreeSearch {
         return new Node(new State(0, 0, new PacManUtils().getRandomMove()), parent, new ArrayList<>());
     }
 
+    private List<Node> expand(Node parent) {//TODO: add comment
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(new Node(new State(0, 0, Constants.MOVE.UP), parent, new ArrayList<>()));
+        nodes.add(new Node(new State(0, 0, Constants.MOVE.RIGHT), parent, new ArrayList<>()));
+        nodes.add(new Node(new State(0, 0, Constants.MOVE.DOWN), parent, new ArrayList<>()));
+        nodes.add(new Node(new State(0, 0, Constants.MOVE.LEFT), parent, new ArrayList<>()));
+        return nodes;
+    }
+
     /**
      * This method performs the back propagation from the terminal state and returns
      * the move that originally got us to it.
      * @param node Leaf node
-     * @param move current move
      * @return Move that initiate the path
      */
-//    private Constants.MOVE backPropagate(Node node, Constants.MOVE move, int score){
-//        if (node.isRootNode()) {
-//            node.getState().addVisit();
-//            node.getState().addScore(score);
-//            return move;
+//    private void backPropagate(Node node, int score){
+//        Node nextNode = null;
+//        while (null != nextNode) {
+//            nextNode.getState().addVisit();
+//            nextNode.getState().addScore(score);
+//            nextNode = nextNode.getParent();
 //        }
-//        node.getState().addVisit();
-//        node.getState().addScore(score);
-//        return backPropagate(node.parent, node.getState().getMove(), node.getState().getScore());
 //    }
-    private Node backPropagate(Node node, Node move, int score){
+    private void backPropagate(Node node, int score, int index){
         if (node.isRootNode()) {
             node.getState().addVisit();
             node.getState().addScore(score);
-            return move;
+            return;
         }
-        node.getState().addVisit();
-        node.getState().addScore(score);
-        return backPropagate(node.parent, node, node.getState().getScore());
+//        if (0 == index) {
+            node.getState().addVisit();
+            node.getState().addScore(score);
+//        }
+        backPropagate(node.parent, node.getState().getScore(), ++index);
     }
 }

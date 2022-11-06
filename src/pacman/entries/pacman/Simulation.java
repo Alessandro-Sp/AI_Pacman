@@ -18,9 +18,12 @@ public class Simulation {
         game.advanceGame(move, new Legacy().getMove());
 //        game.advanceGame(move, new RandomGhosts().getMove());
 
-        node.getState().addScore(game.getScore());
-        node.getState().setWasPacManEaten(game.wasPacManEaten());
+        if (game.wasPacManEaten()) {
+            node.getState().setWasPacManEaten(game.wasPacManEaten());
+            return node;
+        }
 
+        node.getState().addScore(game.getScore());
         return node;
     }
 
