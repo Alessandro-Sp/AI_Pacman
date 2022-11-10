@@ -3,16 +3,13 @@ package pacman.entries.pacman;
 import pacman.game.Constants;
 import pacman.game.Game;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class MonteCarloTreeSearch {
 
 
     public Constants.MOVE nextMove(Game game, Tree tree) {
-        return rollout(game, tree).getState().getMove();
+        return new PacManUtils().getBestChild(getNextBestMove(game, tree)).getState().getMove();
     }
 
     /**
@@ -21,41 +18,57 @@ public class MonteCarloTreeSearch {
      * @param tree tree
      * @return Roll out Node
      */
-    private Node rollout(Game game, Tree tree){
+    private Node getNextBestMove(Game game, Tree tree){
 
-        Node currentNode = tree.getRoot();
+        //Initial state
+        Node root = tree.getRoot();
+        // Expand
+        root.setChildNodes(expand(root));
 
-//        int index = 0;
-        while(!game.gameOver()){//TODO: Find better way
+        while (true) {
+            Node nextNode = getBestNextNode(root);
+
+            //check if node has not been visited
+            if (0 == nextNode.getState().getNOfVisits()) {
+
+                //rollout
+                Node rolloutNode = rollout(game, nextNode);
+
+                //back propagate
+                backPropagate(rolloutNode, rolloutNode.getState().getScore());
+            } else {
+                return root;
+            }
+        }
+    }
+
+    /**
+     * This method performs the roll out for the monte-carlo tree search
+     * @param game Game Object copy
+     * @param node Node
+     * @return Roll out Node
+     */
+    private Node rollout(Game game, Node node) {
+        Node currentNode = node;
+
+        int index = 0;
+        while (!game.gameOver() || index == 5) {//TODO: Find better way
             Node bestNode = currentNode;
 
             // Check if we need to stop rollout
-            if (bestNode.getState().isWasPacManEaten() || null == bestNode.getChildNodes()) {//is terminal node - bestNode.getState().isWasPacManEaten()
+            if (bestNode.getState().isWasPacManEaten()) {//is terminal node - bestNode.getState().isWasPacManEaten() || null == bestNode.getChildNodes()
                 return bestNode;
             }
 
             // Expand
             bestNode.setChildNodes(expand(bestNode));
-//            bestNode.getChildNodes().add(expandOne(bestNode));
-//            bestNode.getChildNodes().add(expandOne(bestNode));
-
-            //get next best
-//            if (!currentNode.isRootNode()) {
-            currentNode = getBestNextNode(bestNode);
-//            }
-
-//            if (0 != currentNode.getState().getNOfVisits()){
-//                continue;
-//            }
+            //Get random child node for next move
+            Node randomNode = bestNode.getChildNodes().get(new Random().nextInt(bestNode.getChildNodes().size()));
 
             // Run simulation
-            Node simNode = new Simulation().run(game, currentNode, currentNode.getState().getMove());
+            currentNode = new Simulation().run(game, randomNode);
 
-            // Back-Propagate
-            backPropagate(simNode, simNode.getState().getScore(), 0);
-
-            currentNode = new PacManUtils().getChildNodeWithMaxVisit(tree.getRoot());
-//            index++;
+            index++;
         }
 
         return currentNode;
@@ -66,11 +79,11 @@ public class MonteCarloTreeSearch {
      *
      * The formula used is - Vi + 2 * sqrt(ln(N)/Ni)
      */
-    private double UCBValue(int visits, int winScore, int NOfVisits){
+    public double UCBValue(int visits, int winScore, int NOfVisits){
         if (0 == NOfVisits){
             return Integer.MAX_VALUE; // NEED TO CHECK WHAT THIS WILL BE
         }
-        return ((double)winScore / (double)NOfVisits) + 2 * Math.sqrt(Math.log(visits) / (double)NOfVisits);//TODO: remember to try different permanent value (1.41)
+        return ((double)winScore / (double)NOfVisits) + 2 * Math.sqrt(Math.log(visits) / (double)NOfVisits);
     }
 
     /**
@@ -129,16 +142,14 @@ public class MonteCarloTreeSearch {
 //            nextNode = nextNode.getParent();
 //        }
 //    }
-    private void backPropagate(Node node, int score, int index){
+    private void backPropagate(Node node, int score){
         if (node.isRootNode()) {
             node.getState().addVisit();
             node.getState().addScore(score);
             return;
         }
-//        if (0 == index) {
-            node.getState().addVisit();
-            node.getState().addScore(score);
-//        }
-        backPropagate(node.parent, node.getState().getScore(), ++index);
+        node.getState().addVisit();
+        node.getState().addScore(score);
+        backPropagate(node.parent, node.getState().getScore());
     }
 }

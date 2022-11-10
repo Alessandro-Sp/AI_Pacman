@@ -8,18 +8,39 @@ public class PacManUtils {
 
     /**
      * This method is used to get a random move
+     *
      * @return random move
      */
-    public MOVE getRandomMove(){
+    public MOVE getRandomMove() {
         MOVE move = MOVE.values()[new Random().nextInt(MOVE.values().length)];
-        while (MOVE.NEUTRAL == move){
+        while (MOVE.NEUTRAL == move) {
             move = MOVE.values()[new Random().nextInt(MOVE.values().length)];
         }
         return move;
     }
 
-    public Node getChildNodeWithMaxVisit(Node rootNode) {
+    public Node getBestChild(Node rootNode) {
         return Collections.max(rootNode.getChildNodes(), Comparator.comparing(c -> c.getState().getNOfVisits()));
+        //get UCB values
+//        Map<Node, Double> UCBValues = new HashMap<>();
+//        for (Node node : rootNode.getChildNodes()) {
+//            UCBValues.put(node, new MonteCarloTreeSearch().UCBValue(rootNode.getState().getScore(), node.getState().getScore(), node.getState().getNOfVisits()));
+//        }
+//
+//        Node bestChild = null;
+//        Double maxUCB = 0.0;
+//        int pills = 0;
+//
+//        for (Map.Entry<Node, Double> entry : UCBValues.entrySet()) {
+//            Node next = entry.getKey();
+//            if (null == bestChild || (entry.getValue() > maxUCB && next.getState().getNofPills() < pills)) {
+//                maxUCB = entry.getValue();
+//                pills = next.getState().getNofPills();
+//                bestChild = next;
+//            }
+//        }
+//
+//        return bestChild;
     }
 }
 
@@ -32,9 +53,10 @@ class Tree {
 
     /**
      * This method initialises the tree
+     *
      * @param node root
      */
-    Tree(Node node){
+    Tree(Node node) {
         this.tree.add(node);
         this.root = node;
     }
@@ -47,7 +69,7 @@ class Tree {
         return root;
     }
 
-    public void addNode(Node parent, Node node){
+    public void addNode(Node parent, Node node) {
         parent.addChild(node);
     }
 }
@@ -92,6 +114,7 @@ class Node {
 
     /**
      * This method add a child to the node
+     *
      * @param node child node
      */
     public void addChild(Node node) {
@@ -101,10 +124,21 @@ class Node {
 
     /**
      * Used to check if node is the root Node
+     *
      * @return True if parent is found
      */
-    public boolean isRootNode(){
+    public boolean isRootNode() {
         return null == this.parent;
+    }
+
+    /**
+     * Used to check if node is a terminal node
+     *
+     * @param node Node obj
+     * @return True if no children are found
+     */
+    public boolean isLeafNode(Node node) {
+        return null == node.getChildNodes();
     }
 }
 
@@ -116,6 +150,8 @@ class State {
     int NOfVisits; //how many time the node is been visited
     MOVE move;
     boolean wasPacManEaten;
+
+    int NofPills;
 
     public State(int score, int NOfVisits, MOVE move) {
         this.score = score;
@@ -153,5 +189,13 @@ class State {
 
     public void setWasPacManEaten(boolean wasPacManEaten) {
         this.wasPacManEaten = wasPacManEaten;
+    }
+
+    public int getNofPills() {
+        return NofPills;
+    }
+
+    public void setNofPills(int nofPills) {
+        NofPills = nofPills;
     }
 }
