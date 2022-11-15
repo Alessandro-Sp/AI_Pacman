@@ -1,10 +1,12 @@
 package pacman.entries.pacman;
 
 import pacman.controllers.Controller;
+import pacman.game.Constants;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  * This is the class you need to modify for your entry. In particular, you need to
@@ -13,30 +15,47 @@ import java.util.ArrayList;
  */
 public class MyPacMan extends Controller<MOVE>
 {
-//	private MOVE myMove=MOVE.NEUTRAL;
+	private MOVE myMove = MOVE.LEFT;
 	
 	public MOVE getMove(Game game, long timeDue)
 	{
 		//game logic
+
+		if (game.isGhostEdible(Constants.GHOST.BLINKY)){
+			return myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY), Constants.DM.PATH);
+		}
+		if (game.isGhostEdible(Constants.GHOST.PINKY)){
+			return myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY), Constants.DM.PATH);
+		}
+		if (game.isGhostEdible(Constants.GHOST.INKY)){
+			return myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.INKY), Constants.DM.PATH);
+		}
+		if (game.isGhostEdible(Constants.GHOST.SUE)){
+			return myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.SUE), Constants.DM.PATH);
+		}
+
+		if (20 > game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY), Constants.DM.PATH)) {
+			return myMove = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY), Constants.DM.PATH);
+		}
+		if (20 > game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY), Constants.DM.PATH)) {
+			return myMove = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY), Constants.DM.PATH);
+		}
+		if (20 > game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.INKY), Constants.DM.PATH)) {
+			return myMove = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.INKY), Constants.DM.PATH);
+		}
+		if (20 > game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.SUE), Constants.DM.PATH)) {
+			return myMove = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.SUE), Constants.DM.PATH);
+		}
 
 		//Create Tree
 		State state = new State(game.getScore(), 0, game.getPacmanLastMoveMade());
 		Node root = new Node(state, null, new ArrayList<>());
 		Tree tree = new Tree(root);
 
-		//call monte-carlo search
-		MOVE myMove = getNextMove(game.copy(), tree);
-
-		System.out.println(myMove);
-//		Game simulation = game.copy();
-//		game.advanceGame(new PacManUtils().getRandomMove(), new RandomGhosts().getMove());
-
-//		System.out.println(Arrays.toString(game.getPillIndices()));
-//		System.out.println(game.isPillStillAvailable(1));
-//		System.out.println(game.getGhostCurrentNodeIndex(BLINKY));
-//		System.out.println(game.getGhostEdibleTime(BLINKY));
-//		System.out.println(game.getNextMoveTowardsTarget(1,2, PATH));
-//		System.out.println(game.getNextMoveAwayFromTarget(1,3, PATH));
+		if (game.isJunction(game.getPacmanCurrentNodeIndex()) || MOVE.NEUTRAL == game.getPacmanLastMoveMade()) {
+			//call monte-carlo search
+			myMove = getNextMove(game.copy(), tree);
+		}
 
 		return myMove;
 	}

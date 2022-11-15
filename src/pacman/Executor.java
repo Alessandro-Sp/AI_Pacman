@@ -16,6 +16,7 @@ import java.util.Random;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.examples.Legacy;
+import pacman.controllers.examples.RandomGhosts;
 import pacman.controllers.examples.RandomPacMan;
 import pacman.entries.pacman.MyPacMan;
 import pacman.game.Constants.GHOST;
@@ -49,31 +50,31 @@ public class Executor {
 		// From Damien: This is the version to run to get an estimated grade for
 		// your submission
 
-		// int numTrials = 10;
-		// exec.runExperiment(new RandomPacMan(), new Legacy(), numTrials);
+//		 int numTrials = 10;
+//		 exec.runExperiment(new MyPacMan(), new Legacy(), numTrials);
 
 		// run a game in synchronous mode: game waits until controllers respond.
-		 int delay = 50;
-		 boolean visual = true;
-		 exec.runGame(new MyPacMan(), new Legacy(), visual, delay);
+//		 int delay = 50;
+//		 boolean visual = true;
+//		 exec.runGame(new MyPacMan(), new Legacy(), visual, delay);
 
 		/// *
 		// run the game in asynchronous mode.
-//		boolean visual = true;
-		// exec.runGameTimed(new NearestPillPacMan(),new
-		// AggressiveGhosts(),visual);
-//		exec.runGameTimed(new MyPacMan(), new Legacy(), visual);
-		// exec.runGameTimed(new HumanController(new KeyBoardInput()),new
-		// StarterGhosts(),visual);
+		boolean visual = true;
+//		 exec.runGameTimed(new NearestPillPacMan(),new
+//		 AggressiveGhosts(),visual);
+		exec.runGameTimed(new MyPacMan(), new Legacy(), visual);
+//		 exec.runGameTimed(new HumanController(new KeyBoardInput()),new
+//		 StarterGhosts(),visual);
 		// */
 
 		// run the game in asynchronous mode but advance as soon as both
 		// controllers are ready - this is the mode of the competition.
 		// time limit of DELAY ms still applies.
-		// boolean visual=true;
-		// boolean fixedTime=false;
-		// exec.runGameTimedSpeedOptimised(new RandomPacMan(),new
-		// RandomGhosts(),fixedTime,visual);
+//		 boolean visual=true;
+//		 boolean fixedTime=false;
+//		 exec.runGameTimedSpeedOptimised(new MyPacMan(),new
+//				 RandomGhosts(),fixedTime,visual);
 
 		/*
 		 * //run game in asynchronous mode and record it to file for replay at a

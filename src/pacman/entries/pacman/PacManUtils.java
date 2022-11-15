@@ -1,46 +1,35 @@
 package pacman.entries.pacman;
 
 import pacman.game.Constants.MOVE;
+import pacman.game.Game;
 
 import java.util.*;
 
 public class PacManUtils {
 
     /**
-     * This method is used to get a random move
-     *
-     * @return random move
+     * This method is used to get a node
+     * @param nodes list of nodes to choose from
+     * @return random noe form supplied list
      */
-    public MOVE getRandomMove() {
-        MOVE move = MOVE.values()[new Random().nextInt(MOVE.values().length)];
-        while (MOVE.NEUTRAL == move) {
-            move = MOVE.values()[new Random().nextInt(MOVE.values().length)];
+    public Node getRandomMove(Game game, List<Node> nodes) {
+        MOVE[] moves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+
+        Node nextMove = null;
+
+        for (Node node : nodes) {
+            for (MOVE move : moves) {
+                if (move == node.getState().getMove()) {
+                    nextMove = node;
+                    break;
+                }
+            }
         }
-        return move;
+        return nextMove;
     }
 
     public Node getBestChild(Node rootNode) {
         return Collections.max(rootNode.getChildNodes(), Comparator.comparing(c -> c.getState().getNOfVisits()));
-        //get UCB values
-//        Map<Node, Double> UCBValues = new HashMap<>();
-//        for (Node node : rootNode.getChildNodes()) {
-//            UCBValues.put(node, new MonteCarloTreeSearch().UCBValue(rootNode.getState().getScore(), node.getState().getScore(), node.getState().getNOfVisits()));
-//        }
-//
-//        Node bestChild = null;
-//        Double maxUCB = 0.0;
-//        int pills = 0;
-//
-//        for (Map.Entry<Node, Double> entry : UCBValues.entrySet()) {
-//            Node next = entry.getKey();
-//            if (null == bestChild || (entry.getValue() > maxUCB && next.getState().getNofPills() < pills)) {
-//                maxUCB = entry.getValue();
-//                pills = next.getState().getNofPills();
-//                bestChild = next;
-//            }
-//        }
-//
-//        return bestChild;
     }
 }
 
@@ -165,6 +154,10 @@ class State {
 
     public void addScore(int score) {
         this.score += score;
+    }
+
+    public void subtractScore(int score) {
+        this.score -= score;
     }
 
     public int getNOfVisits() {
