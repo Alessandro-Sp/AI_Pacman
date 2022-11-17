@@ -9,8 +9,7 @@ public class MonteCarloTreeSearch {
 
 
     public Constants.MOVE nextMove(Game game, Tree tree) {
-        return new PacManUtils().getBestChild(getNextBestMove(game, tree)).getState().getMove();
-//        return getBestNextNode(getNextBestMove(game, tree)).getState().getMove();
+        return getBestNextNode(getNextMove(game, tree)).getState().getMove();
     }
 
     /**
@@ -20,7 +19,7 @@ public class MonteCarloTreeSearch {
      * @param tree tree
      * @return Roll out Node
      */
-    private Node getNextBestMove(Game game, Tree tree) {
+    private Node getNextMove(Game game, Tree tree) {
 
         //Initial state
         Node root = tree.getRoot();
@@ -29,7 +28,7 @@ public class MonteCarloTreeSearch {
 
         long start = new Date().getTime();
 
-        int endTime = 40;
+        int endTime = 38;
         while (new Date().getTime() <= start + endTime) {
 
             //Selection
@@ -45,7 +44,7 @@ public class MonteCarloTreeSearch {
             Node exploreNode = nextNode;
             if (0 < exploreNode.getChildNodes().size()){
                 exploreNode = new PacManUtils().getRandomMove(game, nextNode.getChildNodes());
-//                System.out.println("### - " + exploreNode.getState().getMove());
+//                exploreNode = nextNode.getChildNodes().get(new Random().nextInt(nextNode.getChildNodes().size()));
             }
 
             //rollout
@@ -78,7 +77,6 @@ public class MonteCarloTreeSearch {
 
             // Expand
             bestNode.setChildNodes(expand(bestNode));
-//            bestNode.addChild(expandOne(bestNode));
 
             //Get random child node for next move
             Node randomNode = bestNode.getChildNodes().get(new Random().nextInt(bestNode.getChildNodes().size()));
@@ -86,8 +84,6 @@ public class MonteCarloTreeSearch {
             // Run simulation
             currentNode = new Simulation().run(game, randomNode);
         }
-
-//        return currentNode;
     }
 
     /**

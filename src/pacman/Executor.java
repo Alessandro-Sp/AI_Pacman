@@ -50,8 +50,8 @@ public class Executor {
 		// From Damien: This is the version to run to get an estimated grade for
 		// your submission
 
-//		 int numTrials = 10;
-//		 exec.runExperiment(new MyPacMan(), new Legacy(), numTrials);
+		 int numTrials = 10;
+		 exec.runExperiment(new MyPacMan(), new Legacy(), numTrials);
 
 		// run a game in synchronous mode: game waits until controllers respond.
 //		 int delay = 50;
@@ -60,10 +60,10 @@ public class Executor {
 
 		/// *
 		// run the game in asynchronous mode.
-		boolean visual = true;
+//		boolean visual = true;
 //		 exec.runGameTimed(new NearestPillPacMan(),new
 //		 AggressiveGhosts(),visual);
-		exec.runGameTimed(new MyPacMan(), new Legacy(), visual);
+//		exec.runGameTimed(new MyPacMan(), new Legacy(), visual);
 //		 exec.runGameTimed(new HumanController(new KeyBoardInput()),new
 //		 StarterGhosts(),visual);
 		// */

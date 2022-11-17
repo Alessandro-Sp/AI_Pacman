@@ -1,11 +1,14 @@
 package pacman.entries.pacman;
 
+import pacman.game.Constants;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 import java.util.*;
 
 public class PacManUtils {
+
+    private static final Constants.GHOST[] ghosts = {Constants.GHOST.BLINKY, Constants.GHOST.PINKY, Constants.GHOST.INKY, Constants.GHOST.SUE};
 
     /**
      * This method is used to get a node
@@ -15,21 +18,97 @@ public class PacManUtils {
     public Node getRandomMove(Game game, List<Node> nodes) {
         MOVE[] moves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
 
-        Node nextMove = null;
+        List<Node> possibleNodes = new ArrayList<>();
 
         for (Node node : nodes) {
             for (MOVE move : moves) {
                 if (move == node.getState().getMove()) {
-                    nextMove = node;
-                    break;
+                    possibleNodes.add(node);
                 }
             }
         }
-        return nextMove;
+        return possibleNodes.get(new Random().nextInt(possibleNodes.size()));
     }
 
     public Node getBestChild(Node rootNode) {
         return Collections.max(rootNode.getChildNodes(), Comparator.comparing(c -> c.getState().getNOfVisits()));
+    }
+
+    public boolean isAnyGhostEdible(Game game) {
+        return game.isGhostEdible(ghosts[0]) || game.isGhostEdible(ghosts[1]) || game.isGhostEdible(ghosts[2]) || game.isGhostEdible(ghosts[3]);
+    }
+
+    public int getClosestPillIndex(Game game) {
+        double shortestDistance = 0;
+        int closestPillIndex = 0;
+
+        for (int pill : game.getActivePillsIndices()) {
+            double pillDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, Constants.DM.MANHATTAN);
+            if (-1 != pillDistance) {
+                if (0 == closestPillIndex || closestPillIndex < shortestDistance) {
+                    closestPillIndex = pill;
+                    shortestDistance = pillDistance;
+                }
+            }
+        }
+
+        return closestPillIndex;
+    }
+
+    public Constants.GHOST getClosestGhost(Game game) {
+        double shortestDistance = 0;
+        Constants.GHOST closestGhost = null;
+
+        for (Constants.GHOST ghost : ghosts) {
+            double ghostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghost), Constants.DM.MANHATTAN);
+            if (-1 != ghostDistance) {
+                if (null == closestGhost || ghostDistance < shortestDistance) {
+                    closestGhost = ghost;
+                    shortestDistance = ghostDistance;
+                }
+            }
+        }
+
+        return closestGhost;
+    }
+
+    public Constants.GHOST getSecondClosestGhost(Game game) {
+        Map<Constants.GHOST, Double> distanceMap = new HashMap<>();
+        List<Double> distance = new ArrayList<>();
+
+        for (Constants.GHOST ghost : ghosts) {
+            double ghostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghost), Constants.DM.MANHATTAN);
+            distanceMap.put(ghost, ghostDistance);
+            distance.add(ghostDistance);
+        }
+
+        Collections.sort(distance);
+
+        Constants.GHOST ghost = null;
+
+        for (Map.Entry<Constants.GHOST, Double> entry : distanceMap.entrySet()){
+            if (distance.get(1).equals(entry.getValue())) {
+                ghost = entry.getKey();
+            }
+        }
+        return ghost;
+    }
+
+    public Constants.GHOST getClosestEdibleGhost(Game game) {
+        double shortestDistance = 0;
+        Constants.GHOST closestGhost = null;
+
+        for (Constants.GHOST ghost : ghosts) {
+            if (game.isGhostEdible(ghost)) {
+                double ghostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghost), Constants.DM.MANHATTAN);
+                if (null == closestGhost || ghostDistance < shortestDistance) {
+                    closestGhost = ghost;
+                    shortestDistance = ghostDistance;
+                }
+            }
+        }
+
+        return closestGhost;
     }
 }
 
