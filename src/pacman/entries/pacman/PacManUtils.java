@@ -43,9 +43,9 @@ public class PacManUtils {
         int closestPillIndex = 0;
 
         for (int pill : game.getActivePillsIndices()) {
-            double pillDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, Constants.DM.MANHATTAN);
+            double pillDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, Constants.DM.PATH);
             if (-1 != pillDistance) {
-                if (0 == closestPillIndex || closestPillIndex < shortestDistance) {
+                if (0 == closestPillIndex || pillDistance < shortestDistance) {
                     closestPillIndex = pill;
                     shortestDistance = pillDistance;
                 }
@@ -53,6 +53,23 @@ public class PacManUtils {
         }
 
         return closestPillIndex;
+    }
+
+    public int getClosestPowerPillIndex(Game game) {
+        double shortestDistance = 0;
+        int closestPowerPillIndex = 0;
+
+        for (int pill : game.getActivePowerPillsIndices()) {
+            double pillDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), pill, Constants.DM.PATH);
+            if (-1 != pillDistance) {
+                if (0 == closestPowerPillIndex || pillDistance < shortestDistance) {
+                    closestPowerPillIndex = pill;
+                    shortestDistance = pillDistance;
+                }
+            }
+        }
+
+        return closestPowerPillIndex;
     }
 
     public Constants.GHOST getClosestGhost(Game game) {

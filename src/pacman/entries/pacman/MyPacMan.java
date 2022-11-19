@@ -6,6 +6,7 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /*
@@ -27,52 +28,59 @@ public class MyPacMan extends Controller<MOVE> {
         Tree tree = new Tree(root);
 
         Constants.GHOST closestGhost = utils.getClosestGhost(game);
-        Constants.GHOST secondClosestGhost = utils.getSecondClosestGhost(game);
 
         double closestGhostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.PATH);
-        double secondClosestGhostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.PATH);
+
+
+        int closestPillIndex = utils.getClosestPillIndex(game);
+        int closestPowerPillIndex = utils.getClosestPowerPillIndex(game);
+
 
         //choose next move
-        if (MOVE.NEUTRAL == game.getPacmanLastMoveMade()) {
-            myMove = getNextMove(game.copy(), tree);
-//            while (myMove == game.getPacmanLastMoveMade()) {
-//                //call monte-carlo search
-//                myMove = getNextMove(game.copy(), tree);
-//            }
-            return myMove;
-        }
+        if (game.isJunction(game.getPacmanCurrentNodeIndex())) {
+
+            myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPillIndex, Constants.DM.PATH);
 
 
-        if (-1 != closestGhostDistance) {
-            //choose next move
-            if (game.isJunction(game.getPacmanCurrentNodeIndex())) {
+            //escape from ghost
+            if (null != closestGhost && 12 > closestGhostDistance && -1 != closestGhostDistance) {
                 if (!game.isGhostEdible(closestGhost)) {
-                    //call monte-carlo search
                     myMove = getNextMove(game.copy(), tree);
                 }
             }
-        } else {
-            //focus on eating pills
-//            myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), utils.getClosestPillIndex(game), Constants.DM.PATH);
-        }
-
-        //escape from ghost
-        if (null != closestGhost && 12 > closestGhostDistance && -1 != closestGhostDistance) {
-            if (!game.isGhostEdible(closestGhost)) {
-                myMove = game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.PATH);
-                if (null != secondClosestGhost && 9 > secondClosestGhostDistance)
-                    if (myMove == game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(secondClosestGhost), Constants.DM.PATH)) {
-                        //call monte-carlo search
-                        return getNextMove(game.copy(), tree);
+            if (2 == game.getCurrentLevel()){
+                if (null != closestGhost && 20 > closestGhostDistance && -1 != closestGhostDistance) {
+                    if (!game.isGhostEdible(closestGhost)) {
+                        myMove = getNextMove(game.copy(), tree);
                     }
-                return myMove;
+                }
+            }
+        } else {
+            //escape from ghost
+            if (null != closestGhost && 9 > closestGhostDistance && -1 != closestGhostDistance) {
+                if (!game.isGhostEdible(closestGhost)) {
+                    return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.PATH);
+                }
+            }
+
+            //focus on eating pills
+            MOVE[] possibleNext = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+            for (MOVE move : possibleNext) {
+                if (move != game.getPacmanLastMoveMade()) {
+                    myMove = move;
+                }
             }
         }
 
         //eat ghost
         if (utils.isAnyGhostEdible(game)) {
             Constants.GHOST closestEdibleGhost = utils.getClosestEdibleGhost(game);
-            return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.PATH);
+            if (closestGhost == closestEdibleGhost) {
+                double distance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.PATH);
+                if (25 > distance) {
+                    return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.PATH);
+                }
+            }
         }
 
         return myMove;
