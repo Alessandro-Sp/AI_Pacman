@@ -55,9 +55,9 @@ public class Simulation {
         node.getState().addScore(game.getScore());
 
         //pill count is 0
-        if (game.getNumberOfActivePills() == 0) {
-            node.getState().addScore(100);
-        }
+//        if (game.getNumberOfActivePills() == 0) {
+//            node.getState().addScore(100);
+//        }
 
         //add custom score for pills eaten
 //        int powerPillsEaten = powerPillsScore - game.getNumberOfActivePowerPills();
@@ -69,22 +69,22 @@ public class Simulation {
 //        int pillsEaten = pillsScore - game.getNumberOfActivePills();
 //        if (0 < pillsEaten) {
 //            for (int i = 0; i < pillsEaten; i++) {
-//                node.getState().addScore(10);
+//                node.getState().addScore(50);
+//            }
+//        }
+//
+//        int ghostEaten = ghostScore - game.getNumGhostsEaten();
+//        if (0 < ghostEaten) {
+//            for (int i = 0; i < ghostEaten; i++) {
+//                node.getState().addScore(200);
 //            }
 //        }
 
-        int ghostEaten = ghostScore - game.getNumGhostsEaten();
-        if (0 < ghostEaten) {
-            for (int i = 0; i < ghostEaten; i++) {
-                node.getState().addScore(10);
-            }
-        }
-
         //add custom score for game level
-        int currentLevel = game.getCurrentLevel();
-        if (1 == currentLevel) {
-            node.getState().addScore(10);
-        }
+//        int currentLevel = game.getCurrentLevel();//TODO: try removing
+//        if (1 == currentLevel) {
+//            node.getState().addScore(10);
+//        }
 
         //add custom score for lives left
 //        int lives = game.getPacmanNumberOfLivesRemaining();

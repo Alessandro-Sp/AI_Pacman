@@ -16,8 +16,6 @@ import java.util.Random;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.examples.Legacy;
-import pacman.controllers.examples.RandomGhosts;
-import pacman.controllers.examples.RandomPacMan;
 import pacman.entries.pacman.MyPacMan;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
