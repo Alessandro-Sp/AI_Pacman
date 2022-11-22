@@ -34,8 +34,8 @@
 //
 //        int endTime = 38;
 //        int index = 0;
-////        while (new Date().getTime() <= start + endTime) {
-//        while (200 != index) {
+//        while (new Date().getTime() <= start + endTime) {
+////        while (200 != index) {
 //
 //
 //            //if not end game

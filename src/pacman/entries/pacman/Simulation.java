@@ -47,19 +47,31 @@ public class Simulation {
             node.getState().setWasPacManEaten(game.wasPacManEaten());
         }
 
+        if (game.wasPacManEaten()) {
+            return node;
+        }
+
+
+        node.getState().addScore(game.getScore());
+
+        //pill count is 0
+        if (game.getNumberOfActivePills() == 0) {
+            node.getState().addScore(100);
+        }
+
         //add custom score for pills eaten
-        int powerPillsEaten = powerPillsScore - game.getNumberOfActivePowerPills();
-        if (0 < powerPillsEaten) {
-            for (int i = 0; i < powerPillsEaten; i++) {
-                node.getState().addScore(10);
-            }
-        }
-        int pillsEaten = pillsScore - game.getNumberOfActivePills();
-        if (0 < pillsEaten) {
-            for (int i = 0; i < pillsEaten; i++) {
-                node.getState().addScore(10);
-            }
-        }
+//        int powerPillsEaten = powerPillsScore - game.getNumberOfActivePowerPills();
+//        if (0 < powerPillsEaten) {
+//            for (int i = 0; i < powerPillsEaten; i++) {
+//                node.getState().addScore(10);
+//            }
+//        }
+//        int pillsEaten = pillsScore - game.getNumberOfActivePills();
+//        if (0 < pillsEaten) {
+//            for (int i = 0; i < pillsEaten; i++) {
+//                node.getState().addScore(10);
+//            }
+//        }
 
         int ghostEaten = ghostScore - game.getNumGhostsEaten();
         if (0 < ghostEaten) {
@@ -70,8 +82,8 @@ public class Simulation {
 
         //add custom score for game level
         int currentLevel = game.getCurrentLevel();
-        if (1 < currentLevel) {
-            node.getState().addScore(100);
+        if (1 == currentLevel) {
+            node.getState().addScore(10);
         }
 
         //add custom score for lives left
@@ -85,30 +97,24 @@ public class Simulation {
             node.getState().addScore(10);
         }
 
-//        if (0 == game.getGhostLairTime(Constants.GHOST.BLINKY) || 0 == game.getGhostLairTime(Constants.GHOST.PINKY) || 0 == game.getGhostLairTime(Constants.GHOST.INKY) || 0 == game.getGhostLairTime(Constants.GHOST.SUE)) {
         //get ghost distance
         double ghostBLINKYDistanceScoreAfter = ghostBLINKYDistanceScoreBefore - game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY), Constants.DM.MANHATTAN);
         if (ghostBLINKYDistanceScoreAfter > ghostBLINKYDistanceScoreBefore) {//&& game.isGhostEdible(Constants.GHOST.BLINKY)
             node.getState().addScore(10);
-//            System.out.println("+100");
         }
         double ghostPINKYDistanceScoreAfter = ghostPINKYDistanceScoreBefore - game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY), Constants.DM.MANHATTAN);
         if (ghostPINKYDistanceScoreAfter > ghostPINKYDistanceScoreBefore) {//&& game.isGhostEdible(Constants.GHOST.PINKY)
             node.getState().addScore(10);
-//            System.out.println("+100");
         }
         double ghostINKYDistanceScoreAfter = ghostINKYDistanceScoreBefore - game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.INKY), Constants.DM.MANHATTAN);
         if (ghostINKYDistanceScoreAfter > ghostINKYDistanceScoreBefore) {//&& game.isGhostEdible(Constants.GHOST.INKY)
             node.getState().addScore(10);
-//            System.out.println("+100");
         }
         double ghostSUEDistanceScoreAfter = ghostSUEDistanceScoreBefore - game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.SUE), Constants.DM.MANHATTAN);
         if (ghostSUEDistanceScoreAfter > ghostSUEDistanceScoreBefore) {// && game.isGhostEdible(Constants.GHOST.SUE)
             node.getState().addScore(10);
-//            System.out.println("+100");
         }
-//        }
-//        node.getState().addScore(game.getScore());
+
         return node;
     }
 

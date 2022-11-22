@@ -43,7 +43,7 @@ public class MonteCarloTreeSearch {
             //explore
             Node exploreNode = nextNode;
             if (0 < exploreNode.getChildNodes().size()){
-                exploreNode = new PacManUtils().getRandomMove(game, nextNode.getChildNodes());
+                exploreNode = new PacManUtils().getRandomMove(game, nextNode.getChildNodes());//TODO: looks best option
 //                exploreNode = nextNode.getChildNodes().get(new Random().nextInt(nextNode.getChildNodes().size()));
             }
 
