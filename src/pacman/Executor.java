@@ -16,7 +16,7 @@ import java.util.Random;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.examples.Legacy;
-import pacman.entries.pacman.MyPacMan;
+import pacman.entries.pacman.AlessandroSpanoPacMan;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -49,7 +49,7 @@ public class Executor {
 		// your submission
 
 		 int numTrials = 10;
-		 exec.runExperiment(new MyPacMan(), new Legacy(), numTrials);
+		 exec.runExperiment(new AlessandroSpanoPacMan(), new Legacy(), numTrials);
 
 		// run a game in synchronous mode: game waits until controllers respond.
 //		 int delay = 50;

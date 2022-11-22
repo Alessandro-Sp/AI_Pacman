@@ -128,7 +128,7 @@ public abstract class Controller<T> implements Runnable
 	 * Compute the next move given a copy of the current game and a time the move has to be computed by.
 	 * This is the method contestants need to implement. Many examples are available in
 	 * 			pacman.controllers.examples
-	 * Your controllers must be in the files: pacman.entries.pacman.MyPacMan.java for Pac-Man controllers or
+	 * Your controllers must be in the files: pacman.entries.pacman.AlessandroSpanoPacMan.java for Pac-Man controllers or
 	 * pacman.entries.ghosts.MyGhosts.java for ghosts controllers.
 	 *
 	 * @param game A copy of the current game
