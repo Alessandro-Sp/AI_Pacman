@@ -31,7 +31,7 @@ public class PacManUtils {
     }
 
     public Node getBestChild(Node rootNode) {
-        return Collections.max(rootNode.getChildNodes(), Comparator.comparing(c -> c.getState().getNOfVisits()));
+        return Collections.max(rootNode.getChildNodes(), Comparator.comparing(c -> c.getState().getScore()));
     }
 
     public boolean isAnyGhostEdible(Game game) {

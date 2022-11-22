@@ -7,6 +7,7 @@ import pacman.game.Game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 
 /*
@@ -15,7 +16,7 @@ import java.util.Arrays;
  * be placed in this package or sub-packages (e.g., game.entries.pacman.mypackage).
  */
 public class MyPacMan extends Controller<MOVE> {
-    private MOVE myMove = MOVE.LEFT;
+    private MOVE myMove;
 
     public MOVE getMove(Game game, long timeDue) {
         //game logic
@@ -28,8 +29,12 @@ public class MyPacMan extends Controller<MOVE> {
         Tree tree = new Tree(root);
 
         Constants.GHOST closestGhost = utils.getClosestGhost(game);
+        Constants.GHOST closestEdibleGhost = utils.getClosestEdibleGhost(game);
 
-        double closestGhostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.PATH);
+        Constants.GHOST secondClosestGhost = utils.getSecondClosestGhost(game);
+
+        double closestGhostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.MANHATTAN);
+        double secondClosestGhostDistance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.MANHATTAN);
 
 
         int closestPillIndex = utils.getClosestPillIndex(game);
@@ -39,46 +44,51 @@ public class MyPacMan extends Controller<MOVE> {
         //choose next move
         if (game.isJunction(game.getPacmanCurrentNodeIndex())) {
 
-            myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPillIndex, Constants.DM.PATH);
+            myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), closestPillIndex, Constants.DM.MANHATTAN);
+//            myMove = new NewWay().nextMove2(game, tree);
+//            myMove = getNextMove(game.copy(), tree);
 
 
             //escape from ghost
             if (null != closestGhost && 12 > closestGhostDistance && -1 != closestGhostDistance) {
                 if (!game.isGhostEdible(closestGhost)) {
+//                    myMove = new NewWay().nextMove2(game, tree);
                     myMove = getNextMove(game.copy(), tree);
+//                    myMove = game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.MANHATTAN).opposite();
                 }
             }
-            if (2 == game.getCurrentLevel()){
-                if (null != closestGhost && 20 > closestGhostDistance && -1 != closestGhostDistance) {
-                    if (!game.isGhostEdible(closestGhost)) {
-                        myMove = getNextMove(game.copy(), tree);
+            //avoid pinch
+            if (null != closestGhost && 12 > closestGhostDistance && -1 != closestGhostDistance) {
+                if (null != secondClosestGhost && 25 > secondClosestGhostDistance && -1 != secondClosestGhostDistance) {
+                    if (!game.isGhostEdible(closestGhost) && !game.isGhostEdible(secondClosestGhost)) {
+                        if (myMove == game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(secondClosestGhost), Constants.DM.MANHATTAN)) {
+                            MOVE[] possibleMoves = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
+                            MOVE nextPossible = possibleMoves[new Random().nextInt(possibleMoves.length)];
+                            while (myMove == nextPossible) {
+                                nextPossible = possibleMoves[new Random().nextInt(possibleMoves.length)];
+                            }
+                        }
                     }
                 }
             }
         } else {
             //escape from ghost
-            if (null != closestGhost && 9 > closestGhostDistance && -1 != closestGhostDistance) {
-                if (!game.isGhostEdible(closestGhost)) {
-                    return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.PATH);
+            if (null != closestGhost && 12 > closestGhostDistance && -1 != closestGhostDistance) {
+                if (!game.isGhostEdible(closestGhost) || 5 > game.getGhostEdibleTime(closestEdibleGhost)) {
+                    return game.getNextMoveAwayFromTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestGhost), Constants.DM.MANHATTAN);
                 }
             }
 
-            //focus on eating pills
             MOVE[] possibleNext = game.getPossibleMoves(game.getPacmanCurrentNodeIndex(), game.getPacmanLastMoveMade());
-            for (MOVE move : possibleNext) {
-                if (move != game.getPacmanLastMoveMade()) {
-                    myMove = move;
-                }
-            }
+            myMove = possibleNext[new Random().nextInt(possibleNext.length)];
         }
 
         //eat ghost
         if (utils.isAnyGhostEdible(game)) {
-            Constants.GHOST closestEdibleGhost = utils.getClosestEdibleGhost(game);
             if (closestGhost == closestEdibleGhost) {
-                double distance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.PATH);
-                if (25 > distance) {
-                    return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.PATH);
+                double distance = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.MANHATTAN);
+                if (25 > distance && 15 < game.getGhostEdibleTime(closestEdibleGhost)) {
+                    return game.getNextMoveTowardsTarget(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(closestEdibleGhost), Constants.DM.MANHATTAN);
                 }
             }
         }

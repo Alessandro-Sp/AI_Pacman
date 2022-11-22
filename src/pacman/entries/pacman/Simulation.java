@@ -27,8 +27,8 @@ public class Simulation {
         int pacmanPosition = game.getPacmanCurrentNodeIndex();
 
         double ghostBLINKYDistanceScoreBefore = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.BLINKY), Constants.DM.PATH);
-        double ghostPINKYDistanceScoreBefore = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY), Constants.DM.PATH);
-        double ghostINKYDistanceScoreBefore = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.INKY), Constants.DM.PATH);
+        double ghostPINKYDistanceScoreBefore = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.PINKY), Constants.DM.MANHATTAN);
+        double ghostINKYDistanceScoreBefore = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.INKY), Constants.DM.EUCLID);
         double ghostSUEDistanceScoreBefore = game.getDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(Constants.GHOST.SUE), Constants.DM.PATH);
 
         EnumMap<Constants.GHOST, Constants.MOVE> ghostMoves = new EnumMap<>(Constants.GHOST.class);
@@ -108,7 +108,7 @@ public class Simulation {
 //            System.out.println("+100");
         }
 //        }
-        node.getState().addScore(game.getScore());
+//        node.getState().addScore(game.getScore());
         return node;
     }
 
